@@ -1,0 +1,37 @@
+[project]
+name = "paper2audiobook"
+version = "0.1.0"
+description = "Turn a paper into a short audiobook: guidelines for the agent, one tool for the voice."
+requires-python = ">=3.11"
+dependencies = [
+    "kokoro>=0.9.4",
+    "torch>=2.4",
+    "soundfile>=0.12",
+    "numpy>=1.26",
+    "openai>=1.50",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+p2a = "p2a.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["p2a"]
+
+# Kokoro pulls torch. On Linux use CUDA 12.6 wheels (works with any driver >= 560); CPU is fine too.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu126", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
