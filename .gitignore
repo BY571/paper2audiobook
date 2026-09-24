@@ -3,6 +3,8 @@ papers/*
 output/*
 !output/.gitkeep
 .venv/
+.cache/
+media/
 __pycache__/
 *.egg-info/
 .pytest_cache/

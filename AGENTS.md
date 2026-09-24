@@ -32,6 +32,10 @@ A typical request looks like: "make me an audiobook of https://arxiv.org/abs/240
 5. **Report.** Give the user the MP3 path, the duration, and three sentences: what the paper
    does, its main result, and its main limitation.
 
+6. **Video, only if asked.** Follow [VIDEO.md](VIDEO.md): write `scenes/<short-slug>.py`, preview
+   with `uv run p2a scripts/<short-slug>.md --video -q low --backend silent`, then render with
+   `uv run p2a scripts/<short-slug>.md --video`. Output is `output/<short-slug>.mp4`.
+
 ## Setup (once per machine)
 
 ```
@@ -39,12 +43,13 @@ uv sync
 ```
 
 Requires `ffmpeg` on the PATH. Kokoro downloads its model on first use (about 300 MB) and
-runs on GPU if available, otherwise CPU.
+runs on GPU if available, otherwise CPU. Video mode needs the Pango and Cairo development
+headers (`apt install libcairo2-dev libpango1.0-dev` on Debian/Ubuntu) before `uv sync`.
 
 ## Rules
 
 - Do not put equations, symbols, or figure references in the script. The listener cannot see.
 - Do not skip the appendix when reading. Limitations often hide there.
 - Do not invent results. If the paper does not report a comparison, do not claim one.
-- Keep scripts in `scripts/` so the user can re-synthesize with a different voice later.
+- Keep scripts in `scripts/` and scenes in `scenes/` so the user can re-render later.
 - `papers/` and `output/` are gitignored. `scripts/` is committed.

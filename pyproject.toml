@@ -10,6 +10,8 @@ dependencies = [
     "numpy>=1.26",
     "openai>=1.50",
     "pyyaml>=6.0",
+    "manim>=0.21.0",
+    "manim-voiceover>=0.4.0",
 ]
 
 [project.scripts]

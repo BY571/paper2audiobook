@@ -10,6 +10,8 @@ import numpy as np
 
 class Backend(Protocol):
     name: str
+    voice: str
+    speed: float
 
     def synth(self, text: str) -> tuple[np.ndarray, int]: ...
 
@@ -59,7 +61,23 @@ class OpenAIBackend:
         return samples, rate
 
 
-DEFAULT_VOICE = {"kokoro": "af_heart", "openai": "alloy"}
+class SilentBackend:
+    """Silence lasting as long as the text would take to read. For fast video timing previews."""
+
+    name = "silent"
+    WORDS_PER_SECOND = 2.5
+
+    def __init__(self, voice: str = "none", speed: float = 1.0):
+        self.voice = voice
+        self.speed = speed
+
+    def synth(self, text: str) -> tuple[np.ndarray, int]:
+        rate = 24000
+        seconds = len(text.split()) / (self.WORDS_PER_SECOND * self.speed)
+        return np.zeros(int(seconds * rate), dtype=np.float32), rate
+
+
+DEFAULT_VOICE = {"kokoro": "af_heart", "openai": "alloy", "silent": "none"}
 
 
 def make_backend(name: str, voice: str | None, speed: float) -> Backend:
@@ -68,4 +86,6 @@ def make_backend(name: str, voice: str | None, speed: float) -> Backend:
         return KokoroBackend(voice=voice, speed=speed)
     if name == "openai":
         return OpenAIBackend(voice=voice, speed=speed)
+    if name == "silent":
+        return SilentBackend(voice=voice, speed=speed)
     raise SystemExit(f"Unknown backend {name!r}. Choose from: {', '.join(DEFAULT_VOICE)}")

@@ -23,6 +23,7 @@ PARAGRAPH_PAUSE = 0.5
 class Chunk:
     text: str
     pause_after: float
+    section: str = ""
 
 
 @dataclass
@@ -38,16 +39,18 @@ class Script:
 def parse(source: str) -> Script:
     meta, body = _split_front_matter(source)
     chunks: list[Chunk] = []
+    section = ""
     for block in re.split(r"\n\s*\n", body.strip()):
         block = block.strip()
         if not block:
             continue
         if block.startswith("#"):
+            section = block.lstrip("#").strip()
             if chunks:
                 chunks[-1].pause_after = SECTION_PAUSE
             continue
         text = " ".join(line.strip() for line in block.splitlines())
-        chunks.append(Chunk(text=text, pause_after=PARAGRAPH_PAUSE))
+        chunks.append(Chunk(text=text, pause_after=PARAGRAPH_PAUSE, section=section))
     if chunks:
         chunks[-1].pause_after = 0.0
     return Script(meta=meta, chunks=chunks)

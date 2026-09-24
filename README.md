@@ -23,13 +23,27 @@ what was tested and what was not, headline results, and a longer section on down
 open problems. It ends with a one-minute recap. No equations, no figure references, nothing
 that only makes sense on paper. Read the PDF afterwards if you want the details.
 
+## Video
+
+The same script can become an animated explainer in the 3Blue1Brown style. The agent writes a
+Manim scene file next to the script, one animation block per paragraph, and the tool renders
+it with the narration synced automatically. See [VIDEO.md](VIDEO.md).
+
+```
+uv run p2a scripts/example-script.md --video              # 1080p, output/example-script.mp4
+uv run p2a scripts/example-script.md --video -q low --backend silent   # fast timing preview
+```
+
 ## Setup
 
 ```
 uv sync
 ```
 
-Needs `ffmpeg` on the PATH. Kokoro, the default voice model, runs locally and downloads about
+Needs `ffmpeg` on the PATH. For video mode also install the Pango and Cairo headers first
+(`sudo apt install libcairo2-dev libpango1.0-dev` on Ubuntu), since Manim compiles against them.
+If the build fails with `cannot find -lpango-1.0` and you have Anaconda on your PATH, its bundled
+compiler is being picked up; run `CC=/usr/bin/gcc uv sync` instead. Kokoro, the default voice model, runs locally and downloads about
 300 MB on first use. On Linux with an NVIDIA GPU it uses CUDA, otherwise CPU.
 
 ## Synthesizing a script yourself
@@ -44,6 +58,8 @@ uv run p2a scripts/example-script.md --speed 1.15 -o out.mp3
 Kokoro voices: `af_heart`, `af_bella`, `af_sky`, `am_adam`, `am_michael`, `bf_emma`, `bm_george`
 and more; the first letter is language (a: American, b: British). OpenAI voices: `alloy`, `echo`,
 `fable`, `onyx`, `nova`, `shimmer`.
+
+`--backend silent` produces silence timed to the text, useful for checking video timing quickly.
 
 ## Tests
 
