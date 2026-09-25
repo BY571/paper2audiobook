@@ -33,22 +33,31 @@ def analyse(video: Path, timeline: list[dict]) -> list[str]:
         a, b = int(p["start"] * FPS), min(int(p["end"] * FPS), len(fr))
         if b - a < 2:
             continue
-        static = _longest_run(changed[a:b - 1] < 25) / FPS
-        empty = _longest_run(lit[a:b] < 15) / FPS
+        static, s_at = _longest_run(changed[a:b - 1] < 25)
+        empty, e_at = _longest_run(lit[a:b] < 15)
+        static, s_at, empty, e_at = static / FPS, s_at / FPS, empty / FPS, e_at / FPS
         tag = f"paragraph {p['index'] + 1} ({p['section']}, {p['end'] - p['start']:.0f}s)"
         if static >= STATIC_WARN:
-            warnings.append(f"{tag}: nothing moved for {static:.0f}s")
+            warnings.append(f"{tag}: nothing moved for {static:.0f}s, from {s_at:.0f}s to {s_at + static:.0f}s into the paragraph")
         if empty >= EMPTY_WARN:
-            warnings.append(f"{tag}: screen empty for {empty:.1f}s")
+            warnings.append(f"{tag}: screen empty for {empty:.1f}s, starting {e_at:.0f}s in")
     return warnings
 
 
-def _longest_run(mask: np.ndarray) -> int:
+def _longest_run(mask: np.ndarray) -> tuple[int, int]:
+    """(length, start index) of the longest run of True."""
     best = run = 0
-    for m in mask:
-        run = run + 1 if m else 0
-        best = max(best, run)
-    return best
+    best_at = start = 0
+    for i, m in enumerate(mask):
+        if m:
+            if run == 0:
+                start = i
+            run += 1
+            if run > best:
+                best, best_at = run, start
+        else:
+            run = 0
+    return best, best_at
 
 
 def load_timeline(path: Path) -> list[dict]:

@@ -161,7 +161,7 @@ class PaperScene(VoiceoverScene):
         self.wait(n.remaining - 0.5)
         self.play(FadeOut(group), run_time=0.5)
 
-    def section_title(self, text: str, run_time: float = 1.0) -> Mobject:
+    def section_title(self, text: str, run_time: float = 0.5) -> Mobject:
         """Small label in the top-left corner that persists across a section."""
         lbl = Text(text, font_size=SMALL, color=PALETTE["grey"]).to_corner(UL)
         self.play(FadeIn(lbl), run_time=run_time)

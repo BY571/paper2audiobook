@@ -56,6 +56,9 @@ then sits still for thirty is a slide, not an animation.
 - **Something changes on screen at least every eight seconds.** Use `n.until(...)` to tie each
   change to the sentence that motivates it. A paragraph with five sentences should have roughly
   five visual beats.
+- **Never start a block empty.** The first thing on screen appears in the first second of the
+  paragraph, before any `n.until`. If the first phrase you want to sync to is ten seconds in,
+  put up the frame it will land in (an axis, a grid, a heading) immediately.
 - **Reveal in narration order.** When the voice names three components, the three components
   appear one at a time as they are named, not all at once at the start.
 - **Emphasis counts as motion.** When the voice returns to something already on screen,
