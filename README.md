@@ -10,13 +10,14 @@ One small tool in this repo turns that script into an MP3, or into a Manim video
 
 ## Listen to a sample
 
-[![Listen to the PPO audiobook](samples/ppo-player.svg)](samples/ppo-2017-sample.mp4)
+https://github.com/user-attachments/assets/77ce47dc-2966-4b44-9704-7cc05d135be4
 
-Click the card to play it in GitHub's viewer. That is the full audiobook for *Proximal Policy
-Optimization Algorithms* (Schulman et al., 2017), written by an agent from the PDF in one pass
-and voiced by the default local model. The script it was read from is
-[`scripts/example-script.md`](scripts/example-script.md), and the plain audio is
-[`samples/ppo-2017.mp3`](samples/ppo-2017.mp3).
+Press play, then unmute. That is the full audiobook for *Proximal Policy Optimization
+Algorithms* (Schulman et al., 2017), written by an agent from the PDF in one pass and voiced by
+the default local model. The script it was read from is
+[`scripts/example-script.md`](scripts/example-script.md). The plain audio is
+[`samples/ppo-2017.mp3`](samples/ppo-2017.mp3), and the player card above is
+[`samples/ppo-2017-sample.mp4`](samples/ppo-2017-sample.mp4).
 
 ## What the audiobook covers
 
