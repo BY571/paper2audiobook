@@ -30,7 +30,7 @@ class FakeBackend:
     def synth(self, text):
         n = len(text.split())  # one tenth of a second per word
         t = np.arange(int(0.1 * n * self.rate)) / self.rate
-        return np.sin(2 * np.pi * 440 * t).astype(np.float32), self.rate
+        return np.sin(2 * np.pi * 440 * t).astype(np.float32), self.rate, None
 
 
 def test_parse_sections_and_pauses():
@@ -80,3 +80,29 @@ def test_write_mp3(tmp_path):
     out = tmp_path / "x.mp3"
     audio.write_mp3(np.zeros(8000, dtype=np.float32), 8000, out, title="T", artist="A")
     assert out.exists() and out.stat().st_size > 0
+
+
+def test_phrase_timing_with_and_without_words():
+    from p2a.timing import phrase_start
+
+    text = "First we build the model. Then we add hand-coded rules on top."
+    words = [(w, i * 0.5, i * 0.5 + 0.4) for i, w in enumerate(text.replace(".", "").split())]
+    assert phrase_start(text, "hand-coded rules", 6.0, words) == 8 * 0.5
+    est = phrase_start(text, "hand-coded rules", 6.0, None)
+    assert 3.5 < est < 4.5  # proportional to character position
+    import pytest
+
+    with pytest.raises(ValueError):
+        phrase_start(text, "not there", 6.0, words)
+
+
+def test_cache_stores_word_timings(tmp_path):
+    from p2a import cache
+
+    class Timed(FakeBackend):
+        def synth(self, text):
+            s, r, _ = super().synth(text)
+            return s, r, [(w, i * 0.1, i * 0.1 + 0.1) for i, w in enumerate(text.split())]
+
+    wav = cache.synth_cached(Timed(), "one two three", tmp_path)
+    assert cache.load_words(wav) == [("one", 0.0, 0.1), ("two", 0.1, 0.2), ("three", 0.2, 0.3)]

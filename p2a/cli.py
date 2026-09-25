@@ -9,7 +9,7 @@ import sys
 import warnings
 from pathlib import Path
 
-from . import audio, cache, script
+from . import audio, cache, report, script
 from .backends import DEFAULT_VOICE, Backend, make_backend
 
 QUALITY_FLAGS = {"low": "-ql", "medium": "-qm", "high": "-qh"}
@@ -39,6 +39,7 @@ def render_video(script_path: Path, out: Path, backend: str, voice: str | None, 
         "P2A_VOICE": voice or DEFAULT_VOICE[backend],
         "P2A_SPEED": str(speed),
         "P2A_CACHE": str(cache.DEFAULT_CACHE_DIR),
+        "P2A_TIMELINE": str(media_dir / f"{script_path.stem}.timeline.json"),
     }
     cmd = [sys.executable, "-m", "manim", "render", QUALITY_FLAGS[quality], "--media_dir", str(media_dir), "-o", out.stem, str(scene_file), "Video"]
     print("$", " ".join(cmd))
@@ -49,6 +50,12 @@ def render_video(script_path: Path, out: Path, backend: str, voice: str | None, 
     out.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(candidates[-1], out)
     print(f"\nWrote {out}")
+    timeline = Path(env["P2A_TIMELINE"])
+    if timeline.exists():
+        warnings_ = report.analyse(out, report.load_timeline(timeline))
+        print("\nMotion report:" if warnings_ else "\nMotion report: every paragraph moves and nothing is empty.")
+        for w in warnings_:
+            print("  " + w)
 
 
 def main(argv: list[str] | None = None) -> None:

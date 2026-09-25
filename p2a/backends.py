@@ -1,4 +1,8 @@
-"""Text-to-speech backends. Each returns (samples as float32 mono, sample_rate)."""
+"""Text-to-speech backends.
+
+Each returns (samples as float32 mono, sample_rate, words). `words` is a list of
+(word, start_seconds, end_seconds) when the backend knows word timings, else None.
+"""
 from __future__ import annotations
 
 import io
@@ -7,19 +11,22 @@ from typing import Protocol
 
 import numpy as np
 
+Words = list[tuple[str, float, float]] | None
+
 
 class Backend(Protocol):
     name: str
     voice: str
     speed: float
 
-    def synth(self, text: str) -> tuple[np.ndarray, int]: ...
+    def synth(self, text: str) -> tuple[np.ndarray, int, Words]: ...
 
 
 class KokoroBackend:
     """Local model, runs on CPU or GPU. Voices: af_heart, af_bella, am_adam, bm_george, ..."""
 
     name = "kokoro"
+    RATE = 24000
 
     def __init__(self, voice: str = "af_heart", speed: float = 1.0):
         from kokoro import KPipeline  # slow import, keep it lazy
@@ -28,10 +35,16 @@ class KokoroBackend:
         self.speed = speed
         self.pipeline = KPipeline(lang_code=voice[0], repo_id="hexgrad/Kokoro-82M")
 
-    def synth(self, text: str) -> tuple[np.ndarray, int]:
-        parts = [audio for _, _, audio in self.pipeline(text, voice=self.voice, speed=self.speed)]
-        samples = np.concatenate([np.asarray(p, dtype=np.float32) for p in parts])
-        return samples, 24000
+    def synth(self, text: str) -> tuple[np.ndarray, int, Words]:
+        parts, words, offset = [], [], 0.0
+        for result in self.pipeline(text, voice=self.voice, speed=self.speed):
+            audio = np.asarray(result.audio, dtype=np.float32)
+            for tok in result.tokens or []:
+                if tok.start_ts is not None and tok.text.strip():
+                    words.append((tok.text, offset + tok.start_ts, offset + tok.end_ts))
+            parts.append(audio)
+            offset += len(audio) / self.RATE
+        return np.concatenate(parts), self.RATE, words or None
 
 
 class OpenAIBackend:
@@ -49,7 +62,7 @@ class OpenAIBackend:
         self.speed = speed
         self.model = model
 
-    def synth(self, text: str) -> tuple[np.ndarray, int]:
+    def synth(self, text: str) -> tuple[np.ndarray, int, Words]:
         import soundfile as sf
 
         resp = self.client.audio.speech.create(
@@ -58,7 +71,7 @@ class OpenAIBackend:
         samples, rate = sf.read(io.BytesIO(resp.content), dtype="float32")
         if samples.ndim > 1:
             samples = samples.mean(axis=1)
-        return samples, rate
+        return samples, rate, None
 
 
 class SilentBackend:
@@ -71,10 +84,10 @@ class SilentBackend:
         self.voice = voice
         self.speed = speed
 
-    def synth(self, text: str) -> tuple[np.ndarray, int]:
+    def synth(self, text: str) -> tuple[np.ndarray, int, Words]:
         rate = 24000
         seconds = len(text.split()) / (self.WORDS_PER_SECOND * self.speed)
-        return np.zeros(int(seconds * rate), dtype=np.float32), rate
+        return np.zeros(int(seconds * rate), dtype=np.float32), rate, None
 
 
 DEFAULT_VOICE = {"kokoro": "af_heart", "openai": "alloy", "silent": "none"}

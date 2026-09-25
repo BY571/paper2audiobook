@@ -32,6 +32,8 @@ class Video(PaperScene):
         with self.narrate() as n:
             dot = Dot(color=PALETTE["blue"])
             self.play(FadeIn(dot), run_time=0.5)
+            n.until("five more")
+            self.play(dot.animate.shift(RIGHT), run_time=0.3)
             self.wait(n.remaining)
 """
 
@@ -61,6 +63,7 @@ def test_video_renders_and_matches_narration(tmp_path):
     )
     # 9 words at 2.5 words/s = 3.6 s narration, plus one section pause, plus short transitions
     assert 4.0 < float(probe.stdout) < 8.0
+    assert "Motion report" in r.stdout
 
 
 def test_missing_narrate_block_fails(tmp_path):
