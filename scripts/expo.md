@@ -7,7 +7,7 @@ source: https://proceedings.iclr.cc/paper_files/paper/2026/file/d56a652ad743308b
 
 ## Opening
 
-This is EXPO, Stable Reinforcement Learning with Expressive Policies, by Perry Dong, Qiyang Li, Dorsa Sadigh and Chelsea Finn at Stanford and UC Berkeley, published at ICLR 2026. It is an algorithm paper. It proposes a way to run sample-efficient, off-policy reinforcement learning on top of diffusion and flow-matching policies, the expressive policy classes that modern imitation learning uses, without the training instability that has made that hard. It is also the algorithm underneath EXPO-FT, the real-robot fine-tuning system from the same first author, so if you have heard that one, this is where its core idea comes from.
+This is EXPO, Stable Reinforcement Learning with Expressive Policies, by Perry Dong, Qiyang Li, Dorsa Sadigh and Chelsea Finn at Stanford and UC Berkeley, published at ICLR 2026. It is an algorithm paper. It proposes a way to run sample-efficient, off-policy reinforcement learning on top of diffusion and flow-matching policies, the expressive policy classes that modern imitation learning uses, without the training instability that has made that hard.
 
 ## The problem
 
@@ -57,7 +57,7 @@ Two settings are tested. Online: no pretraining, the offline data just seeds the
 
 Baselines are RLPD, IDQL, DIPO, QSM, DAC and Cal-QL, each in the setting it was designed for. Ablations cover the argmax in the backup, the action edits, the number of samples, the edit scale, the size and quality of the offline dataset, and fine-tuning with the offline data discarded.
 
-What is not tested. No real robot; that is the follow-up paper. No image observations; all twelve tasks use low-dimensional state. No action chunking; every action is a single step, and extending to chunks is also left to the follow-up. Only a diffusion base policy is instantiated, so the claim of being agnostic to policy class is asserted rather than demonstrated with a flow model. The baselines were run by the authors, and RLPD is run without pretraining in both settings. And nothing is said about wall-clock cost, though the discussion admits that sampling and editing many candidates for every element of every batch is expensive.
+What is not tested. No real robot. No image observations; all twelve tasks use low-dimensional state. No action chunking; every action is a single step, and extending to chunks is not attempted. Only a diffusion base policy is instantiated, so the claim of being agnostic to policy class is asserted rather than demonstrated with a flow model. The baselines were run by the authors, and RLPD is run without pretraining in both settings. And nothing is said about wall-clock cost, though the discussion admits that sampling and editing many candidates for every element of every batch is expensive.
 
 ## Results
 
@@ -73,7 +73,7 @@ The core design decision is a good one and it is well supported: get stability b
 
 The limitations, some stated and some not.
 
-First, compute. Each critic update needs eight base samples and eight edits per element of the batch, and the base samples each require a full denoising chain of ten steps. With a batch of two hundred and fifty-six and twenty updates per environment step, that is a lot of diffusion sampling. The authors flag this and leave it for future work. For a small MLP policy on state inputs it is fine; for a billion-parameter model with images it is the central engineering problem, which is exactly what the follow-up paper had to solve.
+First, compute. Each critic update needs eight base samples and eight edits per element of the batch, and the base samples each require a full denoising chain of ten steps. With a batch of two hundred and fifty-six and twenty updates per environment step, that is a lot of diffusion sampling. The authors flag this and leave it for future work. For a small MLP policy on state inputs it is fine; for a billion-parameter model with images it is the central engineering problem, which is exactly what later work applying the method to real robots had to solve.
 
 Second, the edit scale has to be tuned per task, and the appendix shows performance depends on it. The guidance given, small when the data is good and large when exploration is needed, is sensible but it means a new task needs a sweep.
 
@@ -83,7 +83,7 @@ Fourth, the argmax over a learned critic makes the executed policy greedy and de
 
 Fifth, the evaluation is entirely simulated, on state observations, with single-step actions and one expressive policy class. Every generalisation beyond that, to images, chunks, flow models and hardware, was left to later work, and readers of this paper alone should not assume them.
 
-The open problems the authors name are the sampling cost and the uninformed-prior case. The one they do not name is how the method interacts with action chunking, where the critic must score a sequence and the edit must be coherent across it; that turned out to be one of the main changes the follow-up needed.
+The open problems the authors name are the sampling cost and the uninformed-prior case. The one they do not name is how the method interacts with action chunking, where the critic must score a sequence and the edit must be coherent across it; later work by the same authors that took the method onto real robots had to solve exactly that.
 
 ## Recap
 

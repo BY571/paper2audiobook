@@ -51,5 +51,7 @@ headers (`apt install libcairo2-dev libpango1.0-dev` on Debian/Ubuntu) before `u
 - Do not put equations, symbols, or figure references in the script. The listener cannot see.
 - Do not skip the appendix when reading. Limitations often hide there.
 - Do not invent results. If the paper does not report a comparison, do not claim one.
+- Each audiobook stands alone. Never reference another audiobook or script in this repo, even
+  when the paper builds on one you already covered. Re-explain what the listener needs.
 - Keep scripts in `scripts/` and scenes in `scenes/` so the user can re-render later.
 - `papers/` and `output/` are gitignored. `scripts/` is committed.

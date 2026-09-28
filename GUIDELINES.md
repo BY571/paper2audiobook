@@ -66,6 +66,12 @@ and the main downside. Then one sentence on who should read the full paper.
 
 ## Writing for the ear
 
+- Every audiobook stands alone. Never refer to another audiobook, and never assume the
+  listener has heard or read anything else: no "as covered in the previous episode", no "if you
+  have heard that one", no "the follow-up" or "the parent method" as if the listener knows what
+  that is. When the paper builds on earlier work, explain that earlier work inside this script,
+  in enough detail for someone who has never met it. Mentioning related work by name, with a
+  sentence on what it does, is fine; leaning on it is not.
 - Write as you would speak. Short sentences. One idea per sentence.
 - No equations, no variable names, no Greek letters, no loss notation. Describe what a
   quantity means, not how it is written. "The gap between predicted and observed reward"
@@ -118,3 +124,5 @@ Go through the script and answer each with yes or no. Fix every no.
 8. Could a listener who has never seen the paper follow every paragraph?
 9. Is the word count between about 1500 and 2200, or justified if outside?
 10. Does the recap stand alone as a one-minute version of the whole thing?
+11. Does the whole script stand alone? No reference to any other audiobook, and no sentence that
+    only makes sense if the listener already knows a related paper.

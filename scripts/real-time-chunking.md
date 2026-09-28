@@ -45,7 +45,7 @@ The second ingredient is what they call soft masking. Freezing only the handful 
 
 The third piece is the runtime system. A controller thread asks for an action every twenty milliseconds and supplies the latest observation. A background inference thread loops: wait until enough of the current chunk has been executed, take the remaining part of that chunk as the guide, estimate the coming inference delay conservatively from a buffer of recent delays, run the guided generation, then swap the new chunk in the moment it is ready. The execution horizon, how many actions run before the next generation starts, adapts to the measured delay, with a minimum of twenty-five steps in the real experiments. Because the delay is estimated and the guide includes the whole overlap, the system tolerates the delay being different from one call to the next.
 
-The cost is the backward pass at every refinement step. On their model each refinement step goes from about three milliseconds to about seven, so five steps add roughly twenty milliseconds, and the model's total inference goes from seventy-six to ninety-seven milliseconds. That is the price of the guidance, and the second paper in this pair is about removing it.
+The cost is the backward pass at every refinement step. On their model each refinement step goes from about three milliseconds to about seven, so five steps add roughly twenty milliseconds, and the model's total inference goes from seventy-six to ninety-seven milliseconds. That is the price of the guidance, and later work by the same authors moved this conditioning into training to remove it.
 
 ## Experiments
 
@@ -67,9 +67,9 @@ The framing is the paper's real contribution. Seeing the chunk hand-over as inpa
 
 Now the limitations, some stated and some not.
 
-First, it is not free. Every refinement step needs a backward pass, which increased their model's inference time by about a quarter. That is an odd property for a method whose purpose is to cope with latency: it adds latency. The follow-up paper from the same group exists precisely to remove this overhead by moving the conditioning into training.
+First, it is not free. Every refinement step needs a backward pass, which increased their model's inference time by about a quarter. That is an odd property for a method whose purpose is to cope with latency: it adds latency. Later work from the same group removed this overhead by moving the conditioning into training instead.
 
-Second, the guidance is an approximation. It nudges the generation using a local linearisation of the network, and the authors themselves note, in the follow-up, that this linearisation struggles as the frozen prefix gets longer. So the method is best at moderate delays and its advantage may shrink for very slow models or very long network round-trips.
+Second, the guidance is an approximation. It nudges the generation using a local linearisation of the network, and the same authors note in later work that this linearisation struggles as the frozen prefix gets longer. So the method is best at moderate delays and its advantage may shrink for very slow models or very long network round-trips.
 
 Third, the real-world evidence is ten trials per condition. The throughput differences are reported with error bars and the significant ones are called out, but ten trials on a robot is a small sample, and the per-task plots show the methods often reaching similar final scores with the difference being in speed and retries.
 

@@ -7,7 +7,7 @@ source: https://arxiv.org/abs/2512.05964
 
 ## Opening
 
-This is Training-Time Action Conditioning for Efficient Real-Time Chunking, by Kevin Black, Allen Ren, Michael Equi and Sergey Levine at Physical Intelligence, released as a preprint in December 2025. It is a short methods paper, six pages including code, and it is a direct follow-up to the same group's real-time chunking paper from earlier that year. If you have not heard that one, the first few minutes here will catch you up.
+This is Training-Time Action Conditioning for Efficient Real-Time Chunking, by Kevin Black, Allen Ren, Michael Equi and Sergey Levine at Physical Intelligence, released as a preprint in December 2025. It is a short methods paper, six pages including code. It builds directly on a technique called real-time chunking, published by the same group earlier that year, and the next few minutes explain that technique from the ground up before getting to what is new.
 
 ## The problem
 
@@ -23,7 +23,7 @@ Do the conditioning at training time instead. During training, pretend there is 
 
 ## Where it sits
 
-The parent method is inference-time real-time chunking, which this paper keeps as the runtime framework and only replaces the generation step of. The comparison to it is the whole paper.
+The method this paper builds on is inference-time real-time chunking, which it keeps as the runtime framework and only replaces the generation step of. The comparison to it is the whole paper.
 
 Other approaches to the same tension exist. Hierarchical designs like Gemini Robotics and GR00T split the model into a slow planner and a fast action generator. Smaller architectures like MiniVLA and SmolVLA make the whole model cheap enough to run at the edge. The authors call these orthogonal: they change the architecture and training recipe, whereas this method changes neither.
 
@@ -69,7 +69,7 @@ On the real robot, the two real-time chunking variants are statistically indisti
 
 ## Conclusion and downsides
 
-This is a small paper with a clear claim and it supports it. The modification is minimal, the code is there, and on the parent method's own benchmark the training-time version is better at the delays that matter and the same on the real tasks, for less compute at inference. The authors also address the practical question of whether you need to retrain from scratch, and show that fine-tuning a normal checkpoint is enough.
+This is a small paper with a clear claim and it supports it. The modification is minimal, the code is there, and on the benchmark the original real-time chunking paper introduced the training-time version is better at the delays that matter and the same on the real tasks, for less compute at inference. The authors also address the practical question of whether you need to retrain from scratch, and show that fine-tuning a normal checkpoint is enough.
 
 The downsides, some stated and some not.
 
