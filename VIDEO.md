@@ -37,7 +37,8 @@ What the tool guarantees:
   word timestamps, so it is accurate to a fraction of a second. With other backends it estimates
   from the phrase's position in the paragraph. The phrase must appear in the paragraph verbatim
   (punctuation and case ignored) or the render fails, which catches typos early.
-- `n.duration`, `n.elapsed`, `n.remaining`, `n.text`, `n.section` are available. `n.time_of(phrase)`
+- `n.duration`, `n.elapsed`, `n.remaining`, `n.text`, `n.section` are available. `n.text` and the
+  phrases you pass to `until` are the spoken form, so write `50 hertz`, not `50 Hz`. `n.time_of(phrase)`
   returns the second at which a phrase starts without waiting.
 - After the render, the tool prints a motion report: for each paragraph, the longest stretch in
   which nothing on screen changed and any stretch in which the screen was empty. Treat every

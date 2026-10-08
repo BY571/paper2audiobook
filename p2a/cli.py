@@ -20,7 +20,7 @@ def synthesize(scr: script.Script, backend: Backend, cache_dir: Path = cache.DEF
     for i, chunk in enumerate(scr.chunks, 1):
         log(f"[{i}/{len(scr.chunks)}] {chunk.text[:60]}...")
         try:
-            samples, rate = cache.load(cache.synth_cached(backend, chunk.text, cache_dir, log=log))
+            samples, rate = cache.load(cache.synth_cached(backend, chunk.speech, cache_dir, log=log))
         except RuntimeError as e:
             raise SystemExit(f"Paragraph {i}: {e}") from e
         pieces.append((samples, chunk.pause_after))

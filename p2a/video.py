@@ -124,9 +124,9 @@ class PaperScene(VoiceoverScene):
         chunk = self.script.chunks[i]
         self._next += 1
         logger.info(f"[{i + 1}/{len(self.script.chunks)}] {chunk.section}: {chunk.text[:60]}...")
-        with self.voiceover(text=chunk.text) as tracker:
+        with self.voiceover(text=chunk.speech) as tracker:
             self._timeline.append({"index": i, "section": chunk.section, "start": tracker.start_t, "end": tracker.end_t})
-            yield Narration(i, chunk.text, chunk.section, tracker.duration, tracker, self, self.speech_service.last_words)
+            yield Narration(i, chunk.speech, chunk.section, tracker.duration, tracker, self, self.speech_service.last_words)
         if chunk.pause_after:
             self.safe_wait(chunk.pause_after)
 

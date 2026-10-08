@@ -23,9 +23,14 @@ PARAGRAPH_PAUSE = 0.5
 
 @dataclass
 class Chunk:
-    text: str
+    text: str            # as written, for display
     pause_after: float
     section: str = ""
+    speech: str = ""     # what the voice says: units and symbols expanded
+
+    def __post_init__(self):
+        if not self.speech:
+            self.speech = speakable(self.text)
 
 
 @dataclass
@@ -51,7 +56,7 @@ def parse(source: str) -> Script:
             if chunks:
                 chunks[-1].pause_after = SECTION_PAUSE
             continue
-        text = speakable(" ".join(line.strip() for line in block.splitlines()))
+        text = " ".join(line.strip() for line in block.splitlines())
         chunks.append(Chunk(text=text, pause_after=PARAGRAPH_PAUSE, section=section))
     if chunks:
         chunks[-1].pause_after = 0.0

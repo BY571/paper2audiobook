@@ -118,6 +118,7 @@ def test_speakable_units_and_magnitudes():
     assert speakable("The MLP and the GPU, Mr. Smith, 32,768 envs") == "The MLP and the GPU, Mr. Smith, 32,768 envs"
 
 
-def test_parse_applies_speakable():
+def test_parse_keeps_text_and_expands_speech():
     scr = script.parse("Runs at 10 Hz with 2.2M weights.")
-    assert scr.chunks[0].text == "Runs at 10 hertz with 2.2 million weights."
+    assert scr.chunks[0].text == "Runs at 10 Hz with 2.2M weights."
+    assert scr.chunks[0].speech == "Runs at 10 hertz with 2.2 million weights."
