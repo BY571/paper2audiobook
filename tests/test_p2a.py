@@ -106,3 +106,18 @@ def test_cache_stores_word_timings(tmp_path):
 
     wav = cache.synth_cached(Timed(), "one two three", tmp_path)
     assert cache.load_words(wav) == [("one", 0.0, 0.1), ("two", 0.1, 0.2), ("three", 0.2, 0.3)]
+
+
+def test_speakable_units_and_magnitudes():
+    from p2a.speakable import speakable
+
+    assert speakable("2.2M parameters at 50 Hz, 0.29 ms per step") == "2.2 million parameters at 50 hertz, 0.29 milliseconds per step"
+    assert speakable("a 3.6 B-parameter model, 400M steps, 8k to 20k episodes") == "a 3.6 billion-parameter model, 400 million steps, 8 thousand to 20 thousand episodes"
+    assert speakable("40 GB, 3 kHz, 1 ms, 84x84 images, 224×224") == "40 gigabytes, 3 kilohertz, 1 millisecond, 84 by 84 images, 224 by 224"
+    assert speakable("> 90% success, ~100 ms, 512 → 256, 1 − tanh(d/σ)") == "more than 90% success, about 100 milliseconds, 512 to 256, 1 minus tanh(d/ sigma )"
+    assert speakable("The MLP and the GPU, Mr. Smith, 32,768 envs") == "The MLP and the GPU, Mr. Smith, 32,768 envs"
+
+
+def test_parse_applies_speakable():
+    scr = script.parse("Runs at 10 Hz with 2.2M weights.")
+    assert scr.chunks[0].text == "Runs at 10 hertz with 2.2 million weights."
