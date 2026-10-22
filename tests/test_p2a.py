@@ -118,6 +118,12 @@ def test_speakable_units_and_magnitudes():
     assert speakable("The MLP and the GPU, Mr. Smith, 32,768 envs") == "The MLP and the GPU, Mr. Smith, 32,768 envs"
 
 
+def test_speakable_fixes_mispronounced_names():
+    from p2a.speakable import speakable
+
+    assert speakable("DAgger's data and DAgger-collected data") == "Dagger's data and Dagger-collected data"
+
+
 def test_parse_keeps_text_and_expands_speech():
     scr = script.parse("Runs at 10 Hz with 2.2M weights.")
     assert scr.chunks[0].text == "Runs at 10 Hz with 2.2M weights."

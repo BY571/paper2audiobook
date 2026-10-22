@@ -55,6 +55,7 @@ headers (`apt install libcairo2-dev libpango1.0-dev` on Debian/Ubuntu) before `u
   `50 Hz` becomes `50 hertz`, `0.29 ms` becomes `0.29 milliseconds`, `84x84` becomes `84 by 84`.
   The written text is left as it is; only what the voice says changes. Greek letters and arrows
   are spoken as words too.
+  If the voice mangles a name (it says "D-agger" for DAgger), add it to `WORDS` in `p2a/speakable.py`.
 - Each audiobook stands alone. Never reference another audiobook or script in this repo, even
   when the paper builds on one you already covered. Re-explain what the listener needs.
 - Keep scripts in `scripts/` and scenes in `scenes/` so the user can re-render later.

@@ -20,6 +20,9 @@ SYMBOLS = {
     "λ": " lambda ", "τ": " tau ", "φ": " phi ", "Δ": " delta ", "Σ": " sigma ",
 }
 
+# names the voice mispronounces when written as the authors write them
+WORDS = {"DAgger": "Dagger"}
+
 
 def _is_one(num: str) -> bool:
     return num.replace(",", "") in ("1", "1.0")
@@ -28,6 +31,8 @@ def _is_one(num: str) -> bool:
 def speakable(text: str) -> str:
     for sym, word in SYMBOLS.items():
         text = text.replace(sym, word)
+    for name, spoken in WORDS.items():
+        text = re.sub(rf"\b{re.escape(name)}", spoken, text)
     # units: "0.29 ms", "50Hz", "40 GB"; longest suffix first so kHz wins over Hz
     for suffix in sorted(UNITS, key=len, reverse=True):
         sing, plur = UNITS[suffix]
