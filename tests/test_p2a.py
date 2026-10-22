@@ -122,6 +122,7 @@ def test_speakable_fixes_mispronounced_names():
     from p2a.speakable import speakable
 
     assert speakable("DAgger's data and DAgger-collected data") == "Dagger's data and Dagger-collected data"
+    assert speakable("behavioral cloning (BC) or offline RL (RL), DAgger (Dataset Aggregation)") == "behavioral cloning or offline RL, Dagger (Dataset Aggregation)"
 
 
 def test_parse_keeps_text_and_expands_speech():

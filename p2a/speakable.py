@@ -33,6 +33,8 @@ def speakable(text: str) -> str:
         text = text.replace(sym, word)
     for name, spoken in WORDS.items():
         text = re.sub(rf"\b{re.escape(name)}", spoken, text)
+    # parenthesised acronyms, "behavioral cloning (BC)": shown, not spoken
+    text = re.sub(r"\s?\([A-Z][A-Z0-9]{1,7}s?\)", "", text)
     # units: "0.29 ms", "50Hz", "40 GB"; longest suffix first so kHz wins over Hz
     for suffix in sorted(UNITS, key=len, reverse=True):
         sing, plur = UNITS[suffix]
