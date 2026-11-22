@@ -20,6 +20,8 @@ SYMBOLS = {
     "λ": " lambda ", "τ": " tau ", "φ": " phi ", "Δ": " delta ", "Σ": " sigma ",
 }
 
+SUPERSCRIPTS = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹", "0123456789")
+
 # names the voice mispronounces when written as the authors write them
 WORDS = {"DAgger": "Dagger"}
 
@@ -39,6 +41,14 @@ def speakable(text: str) -> str:
     for suffix in sorted(UNITS, key=len, reverse=True):
         sing, plur = UNITS[suffix]
         text = re.sub(rf"{NUM}\s?{re.escape(suffix)}\b", lambda m: f"{m.group(1)} {sing if _is_one(m.group(1)) else plur}", text)
+    # numeric ranges: "1.0–1.6 B frames", "24–32 hours"
+    text = re.sub(rf"{NUM}–(?={NUM})", r"\1 to ", text)
+    # powers written with superscripts: 10⁻⁶, 2⁸
+    text = re.sub(r"(\d+)(⁻?)([⁰¹²³⁴⁵⁶⁷⁸⁹]+)",
+                  lambda m: f"{m.group(1)} to the power of {'minus ' if m.group(2) else ''}{m.group(3).translate(SUPERSCRIPTS)}", text)
+    text = re.sub(rf"{NUM}[x×](?={NUM} to the power)", r"\1 times ", text)
+    # fractions between numbers: a ratio of 1/1024
+    text = re.sub(r"(\d+)/(\d+)", r"\1 over \2", text)
     # magnitudes: "2.2M", "400M", "3.6 B-parameter", "20k"
     text = re.sub(rf"{NUM}\s?([kKMB])(?=\b|-)", lambda m: f"{m.group(1)} {MAGNITUDES[m.group(2)]}", text)
     # dimensions written with x: 84x84, 224×224

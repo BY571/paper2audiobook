@@ -129,3 +129,11 @@ def test_parse_keeps_text_and_expands_speech():
     scr = script.parse("Runs at 10 Hz with 2.2M weights.")
     assert scr.chunks[0].text == "Runs at 10 Hz with 2.2M weights."
     assert scr.chunks[0].speech == "Runs at 10 hertz with 2.2 million weights."
+
+
+def test_speakable_ranges_powers_fractions():
+    from p2a.speakable import speakable
+
+    assert speakable("at 1.0–1.6 B frames, 4–5× more, 24–32 hours") == "at 1.0 to 1.6 billion frames, 4 to 5× more, 24 to 32 hours"
+    assert speakable("c = 10⁻⁶ and 3x10⁻⁴, 2⁸ bins") == "c = 10 to the power of minus 6 and 3 times 10 to the power of minus 4, 2 to the power of 8 bins"
+    assert speakable("a ratio of 1/1024, 84x84 images") == "a ratio of 1 over 1024, 84 by 84 images"
